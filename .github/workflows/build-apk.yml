@@ -68,7 +68,7 @@ jobs:
           r1/IaSzKkrDO+iSWuKK0w3v+tY/+LiKEmS1g/+mHPJIBQx0umbAEMuEEDC33pf6XeMfoqklMp61CnQg//mRUn7IOEi/X3/cLJy0X
           OjMw4VLzFUOUW6XKnvrULx5uAY4OkHjPhn58B5kkUIqp7TVCdnmTmMU86v6Aj+mixQUOXPUL5ouyVfQPXD/unDBNMDEwDQYJYIZI
           AWUDBAIBBQAEIGyJWRIC5WZyOQ4SZuy2k2tmya9pKuJoAyPfIPxTlR0tBBTY+tnuP0brGNe36SZrr675fplj9AICJxA=
-KSEOF
+          KSEOF
           base64 -d /tmp/ks.b64 > ~/.android/debug.keystore
 
       - name: Restore translation patch
@@ -171,7 +171,7 @@ KSEOF
           snhpAoAVracpxKX2wMFkOUupONKfwTtIozuug7DWN3fC6E58I+4xfYRFFZPnKWz+l4AJWlL+3S+RDUams0mXKhjk+/UAuBjbmkLx
           ckNHlk7gH3TFN8Mez0NIf5Gsn++V0t4A24dgXw5LOSsFQhJ8t/A8+VzchK3juQn87gpsMqqfcNVkXxw3qpfgXxYRVUTHchNW8ZWQ
           K4dxy2X+6jRchSha8ZIwsJF9hSX8hyzhPyHs/wFqlR4x3X8AAA==
-PATCHEOF
+          PATCHEOF
           base64 -d /tmp/patch.b64 | gzip -d > translation.patch
           wc -l translation.patch
 
