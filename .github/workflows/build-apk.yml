@@ -22,12 +22,10 @@ jobs:
           java-version: '21'
 
       - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install SDK platform 37 + build tools
         run: |
-          sdkmanager "platforms;android-37" "build-tools;37.0.0"
+          export ANDROID_HOME=$ANDROID_SDK_ROOT
           yes | sdkmanager --licenses >/dev/null 2>&1 || true
+          sdkmanager "platform-tools" "platforms;android-37" "build-tools;37.0.0"
 
       - name: Restore signing keystore
         run: |
