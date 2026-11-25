@@ -24,6 +24,14 @@ object AppSettings {
     private const val DEFAULT_EDGE_ROUTER = "hermite"
     private const val KEY_PROMPT_SPELL_CHECK = "prompt_spell_check"
 
+    // Prompt translation (OpenAI-compatible chat completions API)
+    private const val KEY_TRANSLATE_ENABLED = "translate_enabled"
+    private const val KEY_TRANSLATE_BASE_URL = "translate_base_url"
+    private const val KEY_TRANSLATE_API_KEY = "translate_api_key"
+    private const val KEY_TRANSLATE_MODEL = "translate_model"
+    const val DEFAULT_TRANSLATE_BASE_URL = "https://api.deepseek.com/v1"
+    const val DEFAULT_TRANSLATE_MODEL = "deepseek-chat"
+
     /** Whether any app setting was ever stored (a fresh install, or one whose data was cleared, has none). */
     fun hasAnyValue(context: Context): Boolean =
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).all.isNotEmpty()
@@ -212,6 +220,51 @@ object AppSettings {
             .edit()
             .putBoolean(KEY_PROMPT_SPELL_CHECK, enabled)
             .apply()
+    }
+
+    // ---------------------------------------------------------------- Translation
+
+    /** Whether the prompt translation button is shown. Default off. */
+    fun isTranslationEnabled(context: Context): Boolean =
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getBoolean(KEY_TRANSLATE_ENABLED, false)
+
+    fun setTranslationEnabled(context: Context, enabled: Boolean) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
+            .putBoolean(KEY_TRANSLATE_ENABLED, enabled).apply()
+    }
+
+    /**
+     * Base URL of an OpenAI-compatible chat completions API, e.g. https://api.deepseek.com/v1.
+     * The client appends "/chat/completions".
+     */
+    fun getTranslateBaseUrl(context: Context): String =
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getString(KEY_TRANSLATE_BASE_URL, DEFAULT_TRANSLATE_BASE_URL)
+            ?: DEFAULT_TRANSLATE_BASE_URL
+
+    fun setTranslateBaseUrl(context: Context, url: String) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
+            .putString(KEY_TRANSLATE_BASE_URL, url.trim()).apply()
+    }
+
+    fun getTranslateApiKey(context: Context): String =
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getString(KEY_TRANSLATE_API_KEY, "") ?: ""
+
+    fun setTranslateApiKey(context: Context, key: String) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
+            .putString(KEY_TRANSLATE_API_KEY, key.trim()).apply()
+    }
+
+    fun getTranslateModel(context: Context): String =
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getString(KEY_TRANSLATE_MODEL, DEFAULT_TRANSLATE_MODEL)
+            ?: DEFAULT_TRANSLATE_MODEL
+
+    fun setTranslateModel(context: Context, model: String) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE).edit()
+            .putString(KEY_TRANSLATE_MODEL, model.trim()).apply()
     }
 
     /** Every app setting back to its default (restoring defaults); servers are stored elsewhere and stay. */

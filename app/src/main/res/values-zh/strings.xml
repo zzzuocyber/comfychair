@@ -110,6 +110,8 @@
     <string name="tab_prompt_positive">正向</string>
     <string name="tab_prompt_negative">反向</string>
     <string name="button_generate">生成</string>
+    <string name="button_translate_prompt">翻译提示词（中英互译）</string>
+    <string name="translating">翻译中…</string>
     <string name="button_all_options">全部选项</string>
     <string name="state_open">已打开</string>
     <string name="state_closed">已关闭</string>
@@ -225,6 +227,16 @@
     <string name="desc_auto_connect">启动应用时自动连接到上次使用的服务器</string>
     <string name="label_prompt_spell_check">拼写检查与自动更正</string>
     <string name="desc_prompt_spell_check">在提示词输入框中启用拼写检查和自动更正。AI专用术语可能被标记为错误。</string>
+    <!-- Prompt translation settings -->
+    <string name="title_translation_settings">提示词翻译</string>
+    <string name="label_translation_enabled">显示翻译按钮</string>
+    <string name="desc_translation_enabled">在提示词编辑器里加一个翻译按钮：中文自动翻成英文，英文翻成中文。</string>
+    <string name="label_translate_base_url">API 地址</string>
+    <string name="desc_translate_base_url">兼容 OpenAI 的接口地址，会自动补上 /chat/completions。默认：https://api.deepseek.com/v1</string>
+    <string name="label_translate_api_key">API Key</string>
+    <string name="label_translate_model">模型名</string>
+    <string name="translate_not_set">未设置</string>
+    <string name="translate_key_set">已填写</string>
     <string name="button_reset_prompts_and_library">重置提示词和库</string>
     <string name="msg_reset_prompts_and_library_success">提示词和库已重置</string>
     <string name="button_clear_cache">清空缓存</string>

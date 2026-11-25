@@ -308,6 +308,7 @@ fun VideoToVideoScreen(
             presetViewModel = presetViewModel,
             presetUiState = presetUiState,
             spellCheckEnabled = promptInput.spellCheckEnabled,
+            translateEnabled = promptInput.translateEnabled,
             generateEnabled = videoToVideoViewModel.hasValidConfiguration(),
             onGenerate = { submitJob(false) }
         )

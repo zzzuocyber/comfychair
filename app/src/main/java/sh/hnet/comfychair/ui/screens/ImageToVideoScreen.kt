@@ -308,6 +308,7 @@ fun ImageToVideoScreen(
             presetViewModel = presetViewModel,
             presetUiState = presetUiState,
             spellCheckEnabled = promptInput.spellCheckEnabled,
+            translateEnabled = promptInput.translateEnabled,
             generateEnabled = imageToVideoViewModel.hasValidConfiguration(),
             onGenerate = { submitJob(false) }
         )

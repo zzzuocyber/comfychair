@@ -90,6 +90,7 @@ fun GenerationSettingsPage(viewModel: SettingsViewModel, onNavigateBack: () -> U
                 )
             }
         }
+        TranslationSettings()
     }
 }
 

@@ -185,6 +185,7 @@ fun TextToImageScreen(
             presetViewModel = presetViewModel,
             presetUiState = presetUiState,
             spellCheckEnabled = promptInput.spellCheckEnabled,
+            translateEnabled = promptInput.translateEnabled,
             generateEnabled = textToImageViewModel.hasValidConfiguration(),
             onGenerate = { submitJob(false) }
         )

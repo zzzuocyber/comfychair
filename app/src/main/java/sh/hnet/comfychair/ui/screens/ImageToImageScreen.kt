@@ -401,6 +401,7 @@ fun ImageToImageScreen(
             presetViewModel = presetViewModel,
             presetUiState = presetUiState,
             spellCheckEnabled = promptInput.spellCheckEnabled,
+            translateEnabled = promptInput.translateEnabled,
             generateEnabled = imageToImageViewModel.hasValidConfiguration(),
             onGenerate = { submitJob(false) }
         )

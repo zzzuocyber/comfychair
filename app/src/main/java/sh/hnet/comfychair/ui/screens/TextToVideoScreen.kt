@@ -214,6 +214,7 @@ fun TextToVideoScreen(
             presetViewModel = presetViewModel,
             presetUiState = presetUiState,
             spellCheckEnabled = promptInput.spellCheckEnabled,
+            translateEnabled = promptInput.translateEnabled,
             generateEnabled = textToVideoViewModel.hasValidConfiguration(),
             onGenerate = { submitJob(false) }
         )

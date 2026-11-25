@@ -190,22 +190,26 @@ fun GenerationScreenEffects(
     }
 }
 
-/** Prompt settings a screen reads: spell check, which may change while the screen is in the background. */
-class PromptInputState(val spellCheckEnabled: Boolean)
+/** Prompt settings a screen reads: spell check and translation, which may change while the screen is in the background. */
+class PromptInputState(val spellCheckEnabled: Boolean, val translateEnabled: Boolean)
 
 @Composable
 fun rememberPromptInputState(): PromptInputState {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     var spellCheckEnabled by remember { mutableStateOf(AppSettings.isPromptSpellCheckEnabled(context)) }
+    var translateEnabled by remember { mutableStateOf(AppSettings.isTranslationEnabled(context)) }
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) spellCheckEnabled = AppSettings.isPromptSpellCheckEnabled(context)
+            if (event == Lifecycle.Event.ON_RESUME) {
+                spellCheckEnabled = AppSettings.isPromptSpellCheckEnabled(context)
+                translateEnabled = AppSettings.isTranslationEnabled(context)
+            }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
-    return PromptInputState(spellCheckEnabled)
+    return PromptInputState(spellCheckEnabled, translateEnabled)
 }
 
 /**

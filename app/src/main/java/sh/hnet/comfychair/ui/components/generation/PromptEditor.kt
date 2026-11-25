@@ -2,6 +2,7 @@ package sh.hnet.comfychair.ui.components.generation
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -27,6 +28,7 @@ import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.BookmarkAdd
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Close
+import androidx.compose.material.icons.rounded.Translate
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroupDefaults
@@ -44,10 +46,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -63,11 +67,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import kotlinx.coroutines.launch
 import sh.hnet.comfychair.R
+import sh.hnet.comfychair.storage.AppSettings
 import sh.hnet.comfychair.ui.components.config.CommonGenerationState
 import sh.hnet.comfychair.ui.components.shared.PromptPresetDropdown
 import sh.hnet.comfychair.ui.components.shared.TooltipIconButton
 import sh.hnet.comfychair.ui.components.shared.rememberSpellCheckOutputTransformation
+import sh.hnet.comfychair.util.PromptTranslator
 import sh.hnet.comfychair.viewmodel.PromptPresetUiState
 import sh.hnet.comfychair.viewmodel.PromptPresetViewModel
 
@@ -94,6 +101,7 @@ fun PromptDock(
     presetViewModel: PromptPresetViewModel,
     presetUiState: PromptPresetUiState,
     spellCheckEnabled: Boolean,
+    translateEnabled: Boolean,
     generateEnabled: Boolean,
     onGenerate: () -> Unit
 ) {
@@ -136,6 +144,7 @@ fun PromptDock(
             presetViewModel = presetViewModel,
             presetUiState = presetUiState,
             spellCheckEnabled = spellCheckEnabled,
+            translateEnabled = translateEnabled,
             generateEnabled = generateEnabled,
             onGenerate = {
                 onGenerate()
@@ -226,6 +235,7 @@ private fun PromptEditor(
     presetViewModel: PromptPresetViewModel,
     presetUiState: PromptPresetUiState,
     spellCheckEnabled: Boolean,
+    translateEnabled: Boolean,
     generateEnabled: Boolean,
     onGenerate: () -> Unit,
     onDismiss: () -> Unit
@@ -258,6 +268,29 @@ private fun PromptEditor(
     LaunchedEffect(tab) { focusRequester.requestFocus() }
     val transformation = rememberSpellCheckOutputTransformation(field, enabled = spellCheckEnabled)
     val previewBitmap = remember(preview) { preview?.asImageBitmap() }
+
+    // Prompt translation
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var translating by remember { mutableStateOf(false) }
+    var translateError by remember { mutableStateOf<String?>(null) }
+    fun runTranslate() {
+        val source = field.text.toString()
+        if (source.isBlank() || translating) return
+        translating = true
+        translateError = null
+        scope.launch {
+            when (val result = PromptTranslator.translate(context, source)) {
+                is PromptTranslator.Result.Success -> {
+                    synced[0] = result.text
+                    field.setTextAndPlaceCursorAtEnd(result.text)
+                    currentOnTextChange(result.text)
+                }
+                is PromptTranslator.Result.Error -> translateError = result.message
+            }
+            translating = false
+        }
+    }
 
     Dialog(
         onDismissRequest = onDismiss,
@@ -349,6 +382,14 @@ private fun PromptEditor(
                         { onTextChange("") },
                         enabled = text.isNotEmpty()
                     )
+                    if (translateEnabled) {
+                        TooltipIconButton(
+                            Icons.Rounded.Translate,
+                            stringResource(R.string.button_translate_prompt),
+                            { runTranslate() },
+                            enabled = field.text.isNotEmpty() && !translating
+                        )
+                    }
                     Spacer(Modifier.weight(1f))
                     Button(
                         onClick = onGenerate,
@@ -359,6 +400,22 @@ private fun PromptEditor(
                         Icon(Icons.Rounded.AutoAwesome, contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
                         Spacer(Modifier.width(ButtonDefaults.IconSpacing))
                         Text(stringResource(R.string.button_generate))
+                    }
+                }
+                if (translateEnabled && (translating || translateError != null)) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 2.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = if (translating) stringResource(R.string.translating)
+                                   else translateError ?: "",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = if (translating) MaterialTheme.colorScheme.onSurfaceVariant
+                                    else MaterialTheme.colorScheme.error
+                        )
                     }
                 }
             }
